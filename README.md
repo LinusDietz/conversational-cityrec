@@ -1,8 +1,6 @@
-# CityRec
+# Conversational CityRec
 
-CityRec is a prototype travel recommender system for cities. It was developed to conduct a user study in the scope of a Master’s thesis at the Technical University of Munich (TUM).
-
-Some screenshots of the application are shown below:
+Conversational CityRec is a prototype travel recommender system for cities. It was developed to conduct a user study in the scope of a Master’s thesis at the Technical University of Munich (TUM).
 
 ## Running the application
 

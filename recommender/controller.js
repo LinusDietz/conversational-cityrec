@@ -4,6 +4,8 @@ const Survey = require('./survey.model')
 
 const distance = require('euclidean-distance');
 const pick = require('lodash/pick');
+const max = require('lodash/max')
+const min = require('lodash/min')
 const shuffle = require('lodash/shuffle');
 const sampleSize = require('lodash/sampleSize');
 const sample = require('lodash/sample');
@@ -38,7 +40,7 @@ const featureCodeToName = {
 }
 
 async function postSurvey(req, res) {
-  console.log(req.body);
+
 
   const requestDetails = {
     remoteAddress: get(req, 'connection.remoteAddress', 'NA'),
@@ -50,18 +52,28 @@ async function postSurvey(req, res) {
   let version = req.body.version;
 
   if (version === 3 || version === 4 || version === 5) {
-    Survey.create({...req.body, iterations: getRecommendations(req.session, version), requestDetails, recommendation: getSelectedCity(req.session)},
+    Survey.create({ ...req.body, iterations: getRecommendations(req.session, version), requestDetails, recommendation: getSelectedCity(req.session) },
       (err, survey) => {
-        if (err) return res.status(500).send('A problem occurred while adding the survey to the database!');
+        if (err) {
+          fs = require('fs');
+          fs.appendFile("./error_log.json", JSON.stringify({ ...req.body, requestDetails, iterations: getRecommendations(req.session, version), recommendation: getSelectedCity(req.session) }), function (err) {
+            if (err) return console.log(err);
+          });
+          return res.status(500).send('A problem occurred while adding the survey to the database!');
+        }
         res.status(200).send('Survey answers submitted successfully!');
       });
   } else {
-    Survey.create({...req.body, requestDetails, iterations: getRecommendations(req.session, version), recommendation: getSelectedCity(req.session)},
+    Survey.create({ ...req.body, requestDetails, iterations: getRecommendations(req.session, version), recommendation: getSelectedCity(req.session) },
       (err, survey) => {
         if (err) return res.status(500).send('A problem occurred while adding the survey to the database!');
         res.status(200).send('Survey answers submitted successfully!');
       });
   }
+  fs = require('fs');
+  fs.appendFile("./success_log.json", JSON.stringify({ ...req.body, requestDetails, iterations: getRecommendations(req.session, version), recommendation: getSelectedCity(req.session) }), function (err) {
+    if (err) return console.log(err);
+  });
 }
 
 
@@ -183,21 +195,21 @@ async function recommendInitialCity(req, res, next) {
     cities.forEach(c => {
       c.distance = distance(
         [c.costOfLivingIndexScaled,
-          c.venueCountScaled,
-          c.averageTemperatureScaled,
-          c.averagePrecipitationScaled,
-          c.foodScaled,
-          c.artsAndEntertainmentScaled,
-          c.outdoorsAndRecreationScaled,
-          c.nightlifeScaled],
+        c.venueCountScaled,
+        c.averageTemperatureScaled,
+        c.averagePrecipitationScaled,
+        c.foodScaled,
+        c.artsAndEntertainmentScaled,
+        c.outdoorsAndRecreationScaled,
+        c.nightlifeScaled],
         [userProfile.costOfLivingIndexScaled,
-          userProfile.venueCountScaled,
-          userProfile.averageTemperatureScaled,
-          userProfile.averagePrecipitationScaled,
-          userProfile.foodScaled,
-          userProfile.artsAndEntertainmentScaled,
-          userProfile.outdoorsAndRecreationScaled,
-          userProfile.nightlifeScaled]
+        userProfile.venueCountScaled,
+        userProfile.averageTemperatureScaled,
+        userProfile.averagePrecipitationScaled,
+        userProfile.foodScaled,
+        userProfile.artsAndEntertainmentScaled,
+        userProfile.outdoorsAndRecreationScaled,
+        userProfile.nightlifeScaled]
       );
     });
 
@@ -209,7 +221,7 @@ async function recommendInitialCity(req, res, next) {
     )(cities);
 
     //update session
-    let recommendation = {'recommendation': citiesToRecommend[0], 'critiques': 'null'};
+    let recommendation = { 'recommendation': citiesToRecommend[0], 'critiques': 'null' };
     req.session.recommendations = [recommendation];
     let remainingCities = vanillaFilter(cities, c => !includes(citiesToRecommend.map(c => c._id), c._id));
     req.session.remainingCities = remainingCities;
@@ -253,21 +265,21 @@ async function recommendCity(req, res, next) {
     remainingCities.forEach(c => {
       c.distance = distance(
         [c.costOfLivingIndexScaled,
-          c.venueCountScaled,
-          c.averageTemperatureScaled,
-          c.averagePrecipitationScaled,
-          c.foodScaled,
-          c.artsAndEntertainmentScaled,
-          c.outdoorsAndRecreationScaled,
-          c.nightlifeScaled],
+        c.venueCountScaled,
+        c.averageTemperatureScaled,
+        c.averagePrecipitationScaled,
+        c.foodScaled,
+        c.artsAndEntertainmentScaled,
+        c.outdoorsAndRecreationScaled,
+        c.nightlifeScaled],
         [userProfile.costOfLivingIndexScaled,
-          userProfile.venueCountScaled,
-          userProfile.averageTemperatureScaled,
-          userProfile.averagePrecipitationScaled,
-          userProfile.foodScaled,
-          userProfile.artsAndEntertainmentScaled,
-          userProfile.outdoorsAndRecreationScaled,
-          userProfile.nightlifeScaled]
+        userProfile.venueCountScaled,
+        userProfile.averageTemperatureScaled,
+        userProfile.averagePrecipitationScaled,
+        userProfile.foodScaled,
+        userProfile.artsAndEntertainmentScaled,
+        userProfile.outdoorsAndRecreationScaled,
+        userProfile.nightlifeScaled]
       );
     });
 
@@ -278,7 +290,7 @@ async function recommendCity(req, res, next) {
       take(1)
     )(remainingCities);
 
-    req.session.recommendations = [...req.session.recommendations, {'recommendation': citiesToRecommend[0], 'critiques': refinements}];
+    req.session.recommendations = [...req.session.recommendations, { 'recommendation': citiesToRecommend[0], 'critiques': refinements }];
     req.session.remainingCities = vanillaFilter(remainingCities, c => !includes(citiesToRecommend.map(c => c._id), c._id));
 
     res.set('Cache-Control', 'max-age=0, no-cache, must-revalidate, proxy-revalidate');
@@ -300,7 +312,7 @@ async function recommendInitialCityWithCritiques(req, res, next) {
 
     let mean = req.query['mean'];
     let std = req.query['std'];
-    let version =  Number(req.query.version);
+    let version = Number(req.query.version);
 
     if (!version) {
       return res.status(400).json('Version is missing!');
@@ -329,21 +341,21 @@ async function recommendInitialCityWithCritiques(req, res, next) {
     cities.forEach(c => {
       c.distance = distance(
         [c.costOfLivingIndexScaled,
-          c.averageTemperatureScaled,
-          c.averagePrecipitationScaled,
-          c.foodScaled,
-          c.artsAndEntertainmentScaled,
-          c.outdoorsAndRecreationScaled,
-          c.nightlifeScaled,
-          c.venueCountScaled],
+        c.averageTemperatureScaled,
+        c.averagePrecipitationScaled,
+        c.foodScaled,
+        c.artsAndEntertainmentScaled,
+        c.outdoorsAndRecreationScaled,
+        c.nightlifeScaled,
+        c.venueCountScaled],
         [initialUserProfile.costOfLivingIndexScaled,
-          initialUserProfile.averageTemperatureScaled,
-          initialUserProfile.averagePrecipitationScaled,
-          initialUserProfile.foodScaled,
-          initialUserProfile.artsAndEntertainmentScaled,
-          initialUserProfile.outdoorsAndRecreationScaled,
-          initialUserProfile.nightlifeScaled,
-          initialUserProfile.venueCountScaled]
+        initialUserProfile.averageTemperatureScaled,
+        initialUserProfile.averagePrecipitationScaled,
+        initialUserProfile.foodScaled,
+        initialUserProfile.artsAndEntertainmentScaled,
+        initialUserProfile.outdoorsAndRecreationScaled,
+        initialUserProfile.nightlifeScaled,
+        initialUserProfile.venueCountScaled]
       );
     });
 
@@ -362,7 +374,7 @@ async function recommendInitialCityWithCritiques(req, res, next) {
     let critiques = calculateCritiques(cityToRecommend, req, remainingCities, 6, version, mean, std);
 
     //update session
-    let recommendations = {'recommendation': cityToRecommend, 'critiques': critiques['critiques']};
+    let recommendations = { 'recommendation': cityToRecommend, 'critiques': critiques['critiques'] };
     req.session.recommendations = [recommendations];
 
     res.set('Cache-Control', 'max-age=0, no-cache, must-revalidate, proxy-revalidate');
@@ -386,13 +398,11 @@ async function recommendCityWithCritiques(req, res, next) {
     if (!selectedCityId) {
       return res.status(400).json('Selected city is missing!');
     }
-
+    const feature = req.query['critiquedFeature'];
     let mean = req.query['mean'];
     let std = req.query['std'];
-    let version =  Number(req.query.version);
-
-    const selectedCity = await City.findById(selectedCityId)
-      .exec();
+    let version = Number(req.query.version);
+    const selectedCity = await City.findById(selectedCityId).exec();
 
     //remove current selected city from remaining cities
     req.session.remainingCities = vanillaFilter(req.session.remainingCities, c => c._id !== selectedCity._id);
@@ -400,6 +410,8 @@ async function recommendCityWithCritiques(req, res, next) {
     let remainingCities = req.session.remainingCities;
 
     let lastRecommendation = req.session.recommendations[req.session.recommendations.length - 1]['recommendation'];
+    console.log('critiqued ' + lastRecommendation.name + ' with ' + feature + ' which was ' + lastRecommendation[feature] + ' but now is ' + selectedCity.name + ' (' + selectedCity[feature] + ')')
+
     //update user model before critiquing
     req.session.userModel = updateUserModel(selectedCity, req);
 
@@ -407,12 +419,13 @@ async function recommendCityWithCritiques(req, res, next) {
     //if the selected city is the carrying preference
     let prevSession = find(req.session.recommendations, c => c['recommendation']._id === String(selectedCity._id));
 
-    let critiques = calculateCritiques(selectedCity, req, remainingCities, prevSession? 6 : 5, version, mean, std);
+    let critiques = calculateCritiques(selectedCity, req, remainingCities, prevSession ? 6 : 5, version, mean, std);
 
     let critiqueCities = prevSession ? [...critiques['critiques']] : [...critiques['critiques'], lastRecommendation];
 
     //update session
-    let recommendations = {'recommendation': selectedCity, 'critiques': critiqueCities};
+    let recommendations = { 'recommendation': selectedCity, 'critiquedFeature': feature, 'critiques': critiqueCities };
+
     let recommendationsSoFar = req.session.recommendations;
     recommendationsSoFar.push(recommendations);
     req.session.recommendations = recommendationsSoFar;
@@ -425,6 +438,15 @@ async function recommendCityWithCritiques(req, res, next) {
     remainingCities = vanillaFilter(remainingCities, c => !includes(citiesToRecommend.map(c => c._id), c._id));
     req.session.remainingCities = remainingCities;
 
+
+    recommendations.nightlifeNewValues = [min(remainingCities.map(c => c['nightlife'])), max(remainingCities.map(c => c['nightlife']))]
+    recommendations.foodNewValues = [min(remainingCities.map(c => c['food'])), max(remainingCities.map(c => c['food']))]
+    recommendations.costOfLivingIndexNewValues = [min(remainingCities.map(c => c['costOfLivingIndex'])), max(remainingCities.map(c => c['costOfLivingIndex']))]
+    recommendations.artsAndEntertainmentNewValues = [min(remainingCities.map(c => c['artsAndEntertainment'])), max(remainingCities.map(c => c['artsAndEntertainment']))]
+    recommendations.outdoorsAndRecreationNewValues = [min(remainingCities.map(c => c['outdoorsAndRecreation'])), max(remainingCities.map(c => c['outdoorsAndRecreation']))]
+    recommendations.averageTemperatureNewValues = [min(remainingCities.map(c => c['averageTemperature'])), max(remainingCities.map(c => c['averageTemperature']))]
+
+
     return res.status(200).json({
       'recommendations': citiesToRecommend,
       'stats': constructStatistics(citiesToRecommend, critiques.stats, req.session.userModel)
@@ -434,17 +456,122 @@ async function recommendCityWithCritiques(req, res, next) {
   }
 }
 
-function getRecommendations(session, version){
-  let recommendations = session.recommendations;
+async function recommendCityWithEliminationCritiques(req, res, next) {// UPDATE THIS FOR ELIMINATION!
+  try {
+    let selectedCityId = req.query['selectedCityId'];
+    if (!selectedCityId) {
+      return res.status(400).json('Selected city is missing!');
+    }
+    const feature = req.query['critiquedFeature'];
+    let mean = req.query['mean'];
+    let std = req.query['std'];
+    let version = Number(req.query.version);
+    const selectedCity = await City.findById(selectedCityId).exec();
 
-  if (version !== 2){
+    //remove current selected city from remaining cities
+    req.session.remainingCities = vanillaFilter(req.session.remainingCities, c => c._id !== selectedCity._id);
+
+    let lastRecommendation = req.session.recommendations[req.session.recommendations.length - 1]['recommendation'];
+    const change = lastRecommendation[feature] < selectedCity[feature] ? 'increased' : 'decreased';
+    console.log('critiqued ' + lastRecommendation.name + ' with ' + feature + ' which was ' + lastRecommendation[feature] + ' and now is ' + change + ' to ' + selectedCity.name + ' (' + selectedCity[feature] + ')')
+    function prettyprintcity(c, f) {
+      return { name: c['name'], feature: c[f] };
+    }
+    // remove cities with worse feature score
+    const beforeCities = req.session.remainingCities;
+
+    console.log('before', beforeCities.map(c => prettyprintcity(c, feature)));
+    if (selectedCity[feature] > lastRecommendation[feature]) {
+      req.session.remainingCities = vanillaFilter(req.session.remainingCities, c => c[feature] > lastRecommendation[feature]);
+    } else {
+      req.session.remainingCities = vanillaFilter(req.session.remainingCities, c => c[feature] < lastRecommendation[feature]);
+    }
+    const removed = beforeCities.filter(value => req.session.remainingCities.includes(value))
+
+
+
+    let remainingCities = req.session.remainingCities;
+
+    //update user model before critiquing
+    req.session.userModel = updateUserModel(selectedCity, req);
+
+    //if the selected city is the carrying preference
+    let prevSession = find(req.session.recommendations, c => c['recommendation']._id === String(selectedCity._id));
+
+    let critiques = calculateCritiques(selectedCity, req, remainingCities, prevSession ? 6 : 5, version, mean, std);
+
+    let critiqueCities = prevSession ? [...critiques['critiques']] : [...critiques['critiques'], lastRecommendation];
+
+    //update session
+    let recommendations = { 'recommendation': selectedCity, 'critiquedFeature': feature, 'critiques': critiqueCities };
+    let recommendationsSoFar = req.session.recommendations;
+    recommendationsSoFar.push(recommendations);
+    req.session.recommendations = recommendationsSoFar;
+
+    let citiesToRecommend = []
+    if (critiqueCities.includes(selectedCity)) {
+      citiesToRecommend = critiqueCities;
+    } else {
+      citiesToRecommend = [selectedCity].concat(critiqueCities);
+    }
+
+    res.set('Cache-Control', 'max-age=0, no-cache, must-revalidate, proxy-revalidate');
+
+    //remainingCities = vanillaFilter(remainingCities, c => !includes(citiesToRecommend.map(c => c._id), c._id));
+    req.session.remainingCities = [...new Set(remainingCities.concat(citiesToRecommend))];
+
+    if (selectedCity[feature] > lastRecommendation[feature]) {
+      console.log('min should be ' + lastRecommendation[feature] + ' and was: ' + min(citiesToRecommend.map(c => c[feature])));
+    } else {
+      console.log('max should be ' + lastRecommendation[feature] + ' and was: ' + max(citiesToRecommend.map(c => c[feature])));
+    }
+    recommendations.nightlifeNewValues = [min(remainingCities.map(c => c['nightlife'])), max(remainingCities.map(c => c['nightlife']))]
+    recommendations.foodNewValues = [min(remainingCities.map(c => c['food'])), max(remainingCities.map(c => c['food']))]
+    recommendations.costOfLivingIndexNewValues = [min(remainingCities.map(c => c['costOfLivingIndex'])), max(remainingCities.map(c => c['costOfLivingIndex']))]
+    recommendations.artsAndEntertainmentNewValues = [min(remainingCities.map(c => c['artsAndEntertainment'])), max(remainingCities.map(c => c['artsAndEntertainment']))]
+    recommendations.outdoorsAndRecreationNewValues = [min(remainingCities.map(c => c['outdoorsAndRecreation'])), max(remainingCities.map(c => c['outdoorsAndRecreation']))]
+    recommendations.averageTemperatureNewValues = [min(remainingCities.map(c => c['averageTemperature'])), max(remainingCities.map(c => c['averageTemperature']))]
+
+    console.log('after', remainingCities.map(c => prettyprintcity(c, feature)));
+    console.log(remainingCities.length + ' are left')
+    console.log('toRecommend', citiesToRecommend.map(c => prettyprintcity(c, feature)));
+
+    return res.status(200).json({
+      'recommendations': citiesToRecommend,
+      'stats': constructStatistics(citiesToRecommend, critiques.stats, req.session.userModel)
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+function getRecommendations(session, version) {
+  let recommendations = session.recommendations;
+  console.log(recommendations);
+
+  if (version !== 2) {
     let recommendationStats = recommendations.map(recommendation => {
       let recommendationStat = {};
       recommendationStat["recommendation"] = recommendation.recommendation.name;
+      recommendationStat["nightlife"] = recommendation.recommendation.nightlifeScaled;
+      recommendationStat["food"] = recommendation.recommendation.foodScaled;
+      recommendationStat["costOfLivingIndex"] = recommendation.recommendation.costOfLivingIndexScaled;
+      recommendationStat["artsAndEntertainment"] = recommendation.recommendation.artsAndEntertainmentScaled;
+      recommendationStat["outdoorsAndRecreation"] = recommendation.recommendation.outdoorsAndRecreationScaled;
+      recommendationStat["averageTemperature"] = recommendation.recommendation.averageTemperatureScaled;
 
-      recommendationStat["critiques"] = recommendation.critiques.map( critique =>
+      recommendationStat["critiques"] = recommendation.critiques.map(critique =>
         critique.name
       );
+      recommendationStat["critiquedFeature"] = recommendation.critiquedFeature;
+      recommendationStat["nightlifeNewValues"] = recommendation.nightlifeNewValues;
+      recommendationStat["foodNewValues"] = recommendation.foodNewValues;
+      recommendationStat["costOfLivingIndexNewValues"] = recommendation.costOfLivingIndexNewValues;
+      recommendationStat["artsAndEntertainmentNewValues"] = recommendation.artsAndEntertainmentNewValues;
+      recommendationStat["outdoorsAndRecreationNewValues"] = recommendation.outdoorsAndRecreationNewValues;
+      recommendationStat["averageTemperatureNewValues"] = recommendation.averageTemperatureNewValues;
+
+      console.log("======\n", recommendationStat)
 
       return recommendationStat;
     });
@@ -453,9 +580,13 @@ function getRecommendations(session, version){
     let recommendationStats = recommendations.map(recommendation => {
       let recommendationStat = {};
       recommendationStat["recommendation"] = recommendation.recommendation.name;
-
+      recommendationStat["nightlife"] = recommendation.recommendation.nightlifeScaled;
+      recommendationStat["food"] = recommendation.recommendation.foodScaled;
+      recommendationStat["costOfLivingIndex"] = recommendation.recommendation.costOfLivingIndexScaled;
+      recommendationStat["artsAndEntertainment"] = recommendation.recommendation.artsAndEntertainmentScaled;
+      recommendationStat["outdoorsAndRecreation"] = recommendation.recommendation.outdoorsAndRecreationScaled;
+      recommendationStat["averageTemperature"] = recommendation.recommendation.averageTemperatureScaled;
       recommendationStat["critiques"] = recommendation.critiques;
-
       return recommendationStat;
     });
     return recommendationStats;
@@ -476,5 +607,6 @@ module.exports = {
   recommendCity,
   postSurvey,
   recommendCityWithCritiques,
+  recommendCityWithEliminationCritiques,
   recommendInitialCityWithCritiques
 }

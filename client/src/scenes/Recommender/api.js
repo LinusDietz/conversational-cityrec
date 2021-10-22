@@ -70,13 +70,32 @@ export const fetchInitialRecommendationWithCritiques = async (selectedCities, ve
 }
 
 
-export const fetchRecommendationWithCritiques = async (selectedCityId, version) => {
+export const fetchRecommendationWithCritiques = async (selectedCityId, feature, version) => {
   try {
     const params = new URLSearchParams();
     params.append('selectedCityId', selectedCityId);
+    params.append('critiquedFeature', feature);
     params.append('version', version);
 
     const response = await get('/api/recommendations-with-critiques', { params });
+
+    const cities = response.data.recommendations.map(City.parse);
+    const statistics = response.data.stats;
+    cities[0].currentRecommendation = true;
+    return {"cities": cities, "statistics": statistics};
+  } catch (error) {
+    return [];
+  }
+}
+
+export const fetchRecommendationWithEliminationCritiques = async (selectedCityId, feature, version) => {
+  try {
+    const params = new URLSearchParams();
+    params.append('selectedCityId', selectedCityId);
+    params.append('critiquedFeature', feature);
+    params.append('version', version);
+
+    const response = await get('/api/recommendations-with-elimination-critiques', { params });
 
     const cities = response.data.recommendations.map(City.parse);
     const statistics = response.data.stats;

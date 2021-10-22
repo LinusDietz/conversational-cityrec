@@ -14,6 +14,7 @@ let STD_1 = 11;
 function calculateCritiques(currentRecommendedCity, req, cities, noOfCritiques, version, mean, std) {
   switch (version) {
     case 3:
+      return calculateCritiquesByDistribution(currentRecommendedCity, req, cities, noOfCritiques, version, mean, std);
     case 4:
       return calculateCritiquesByDistribution(currentRecommendedCity, req, cities, noOfCritiques, version, mean, std);
     default:

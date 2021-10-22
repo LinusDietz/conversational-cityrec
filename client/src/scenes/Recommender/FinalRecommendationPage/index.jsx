@@ -42,41 +42,93 @@ const questionsSet = {
       rows: [
         {
           value: "interest",
-          text: "The travel destinations recommended to me by CityRec, matched my interests"
+          text: "The final city recommended to me matched my interest."
         },
         {
-          value: "novelty",
-          text: "The recommender system helped me discover new travel destinations"
+          value: "suggestions",
+          text: "This recommender system gave me good suggestions."
         },
         {
-          value: "explanation",
-          text: "I understood why the travel destinations were recommended to me"
+          value: "friend",
+          text: "The recommendations I received better fits my interests than what I may receive from a friend."
         },
         {
-          value: "preference",
-          text: "I found it easy to tell the system what my preferences are"
+          value: "familiar",
+          text: "Some of the recommended cities are familiar to me."
         },
         {
-          value: "tasteProfile",
-          text: "I found it easy to modify my taste profile in this recommender system"
+          value: "attractive",
+          text: "The cities recommended to me are attractive."
         },
         {
-          value: "interface",
-          text: "The layout and labels of the recommender interface are adequate"
+          value: "discovery",
+          text: "This recommender system helped me discover new cities to travel to."
         },
         {
-          value: "satisfaction",
-          text: "Overall, I am satisfied with this recommender system"
+          value: "tell_like",
+          text: "This recommender system allows me to tell what I like/dislike."
         },
         {
-          value: "futureUse",
-          text: "I would use this recommender system again, when looking for travel destinations"
+          value: "sufficient",
+          text: "The information provided for the recommended cities is sufficient for me to make a travel decision."
+        },
+        {
+          value: "adequate",
+          text: "The layout of this recommender system interface is adequate."
+        },
+        {
+          value: "easy_like",
+          text: "I found it easy to tell this recommender system what I like/dislike."
+        },
+        {
+          value: "easy_modify",
+          text: "I found it easy to modify my preferences in this recommender system."
+        },
+        {
+          value: "easy_inform",
+          text: "I found it easy to inform the system if I dislike/like the currently recommended city."
+        },
+        {
+          value: "familiar_quickly",
+          text: "I became familiar with this recommender system very quickly."
+        },
+        {
+          value: "attentionCheck",
+          text: "Please select \"Disagree\" for this attention check."
+        },
+        {
+          value: "ideal",
+          text: "This recommender system helped me find the ideal city to travel to."
+        },
+        {
+          value: "influence",
+          text: "This recommender system influenced my selection of cities."
+        },
+        {
+          value: "finding",
+          text: "Finding a city to travel to with the help of this recommender system is easy."
+        },
+        {
+          value: "control",
+          text: "I feel in control of modifying my preferences."
+        },
+        {
+          value: "satisfied",
+          text: "Overall, I am satisfied with this recommender system."
+        },
+        {
+          value: "trust",
+          text: "This recommender system can be trusted."
+        },
+        {
+          value: "use_again",
+          text: "I would use this recommender to find cities to travel to."
         },
       ]
     },
     { type: "radiogroup",
       name: "travelingFrequency",
-      title: "How often do you travel for vacation? (a period of at least one night spent away from home)",
+      title: "How often do you usually travel for vacation? (a period of at least one night spent away from home; before the Covid-19 Pandemic)",
       isRequired: true,
       choices: [
         'Less than once a year',
@@ -115,10 +167,6 @@ const questionsSet = {
       ],
       rows: [
         {
-          value: "cost",
-          text: "Cost"
-        },
-        {
           value: "weather",
           text: "Weather"
         },
@@ -141,6 +189,10 @@ const questionsSet = {
         {
           value: "shopsAndServices",
           text: "An abundance of shops and services"
+        },
+        {
+          value: "cost",
+          text: "Price level"
         },
       ]
     },
@@ -254,18 +306,17 @@ class FinalRecommendationPage extends React.Component {
   onComplete = (survey, options) => {
     const { submitSurvey } = this.props;
     submitSurvey(survey.data);
-    console.log('survey submitted...');
   }
   onCompleteOnce = once(this.onComplete);
 
   render() {
     const { cities, isLoading, location, surveySubmitted } = this.props;
     const { selectedCityIndex, model } = this.state;
-
     const maxSimilarity = cities[0] ? 1/cities[0].distance : 0;
 
     const urlParameters = queryString.parse(location.search);
     const surveyType = urlParameters.sv;
+    const isProlific = !!urlParameters.PROLIFIC_PID;
 
     return (
       isLoading
@@ -286,6 +337,18 @@ class FinalRecommendationPage extends React.Component {
                 </StandardLargeContainer>
               </StandardRow>
             :
+              isProlific
+                ?
+                <React.Fragment>
+                  <Survey.Survey
+                      model={model}
+                      onComplete={this.onCompleteOnce}
+                      completeText="Submit answers"
+                      completedHtml="You are not being redirected to prolific!"
+                  />
+                  {surveySubmitted ? window.location.href = "https://app.prolific.co/submissions/complete?cc=6D4E4B23" : true}
+                </React.Fragment>              
+                : 
               <React.Fragment>
                 <PageTitle style={{marginTop: '15px'}}>Research survey</PageTitle>
                 {!surveySubmitted && 
@@ -305,9 +368,9 @@ class FinalRecommendationPage extends React.Component {
                     }
                   </StandardLargeContainer>
                 </StandardRow>
-              </React.Fragment>
+              </React.Fragment>              
           }
-        </CenteredContainer>
+        </CenteredContainer>              
     );
   }
 }

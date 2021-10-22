@@ -35,3 +35,23 @@ export const TemperatureField = styled.div`
     margin-right: 8px;
   }
 `;
+
+export const HintMessage = styled.h4`
+  font-size: 14px;
+  color: ${p => p.theme.primaryText};
+  display: block;
+  margin: auto;
+  max-width: 900px;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+  margin-bottom: 10px;
+`;
+
+export const ValueLabel = styled.h4`
+  font-size: 14px;
+  color: ${p => p.theme.primaryText};
+  display: block;
+  font-weight: 600;
+  text-align: center;
+`;

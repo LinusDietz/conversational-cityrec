@@ -7,7 +7,7 @@ import CostIndicator from '../../../../components/CostIndicator';
 import MatchLevelIndicator from '../../../../components/MatchLevelIndicator';
 import { ProgressBarWithMargin, TemperatureField } from '../../styles';
 
-const MAP_KEY = 'Nbx46lwGXYYiagLOQyuAM8Y9PHBimLAn'
+const MAP_KEY = 'nfDTGswfvhlIVG3XwaxfZenrjx4hJjUK'
 
 const Container = styled(ModifiedCard)`
   min-height: 350px;
@@ -86,7 +86,7 @@ const CityDetailsPane = props => {
   const mapUrl = `https://www.mapquestapi.com/staticmap/v5/map?key=${MAP_KEY}&locations=${city.name && city.name.split(' ').join('+')},${city.country && city.country.split(' ').join('+')}|marker-sm-2E71F0&zoom=5&type=light&size=500,250@2x`
   return(
     <Container>
-      <span style={{'font-size': '20px'}}>This is our recommendation for you</span>
+      <span style={{'fontSize': '20px'}}>This is our recommendation for you</span>
       <CardHead>
         <div>
           <span id="title">{city.name}</span>

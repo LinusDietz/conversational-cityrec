@@ -167,7 +167,8 @@ class Landing extends React.Component {
     if ('v' in urlParameters) {
       history.push(`${route}${location.search}`) 
     } else {
-      let versionArray = [2,3,4,5];
+      let versionArray = ["9f2c3dc5","4cc20c83","64f91682"];
+
       const randomVersion = versionArray[Math.floor(Math.random() * versionArray.length)];
       const versionParameter = location.search === '' ? `?v=${randomVersion}` : `&v=${randomVersion}`
       history.push(`${route}${location.search}${versionParameter}`) 
@@ -189,7 +190,7 @@ class Landing extends React.Component {
             <span id="head">Dear participant,</span>
             <span>thank you for taking part in our user study on tourism recommender systems.</span>
             <span>In this prototype application, you can get recommendations for travel destinations by expressing your travel preferences. After interacting with the system, we’ll ask you to fill out a short survey. Your responses will greatly contribute to our research and help us find new ways how to improve tourism recommender systems.</span>
-            <span>CityRec was developed to conduct this user study in the scope of a Master’s thesis at the Technical University of Munich (TUM). If you have any questions or concerns, please don’t hesitate to contact us via <a href="mailto:sameera.palage@tum.de,linus.dietz@tum.de">email.</a></span>
+            <span>This system was developed to conduct this user study in the scope of ongoing research on travel recommender systems at the Technical University of Munich (TUM). If you have any questions or concerns, please don’t hesitate to contact us via <a href="mailto:linus.dietz@tum.de">email.</a></span>
             <span>All gathered data is anonymized immediately and cannot be traced back to any individual.</span>
             <AgreementField onClick={this.onAgreementClick}>
               <ModifiedCheckbox isChecked={agreement} />
@@ -203,12 +204,10 @@ class Landing extends React.Component {
               <Icon />
             </StartButton>
           </Card>
-          <ContactDetails>
-            <span>Thesis author: <a href="mailto:sameera.palage@tum.de">Sameera Thimbiri Palage</a></span>
-            <span>•</span>
-            <span>Thesis advisor: <a href="mailto:linus.dietz@tum.de">Linus Dietz</a></span>
+          <ContactDetails>            
+            <span>Corresponding author: <a href="mailto:linus.dietz@tum.de">Linus Dietz</a></span>
           </ContactDetails>
-          <Footprint>Munich, 2019</Footprint>
+          <Footprint>Munich, Germany. 2020</Footprint>
         </Container>
       </Wrapper>
     );

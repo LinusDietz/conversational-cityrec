@@ -6,7 +6,7 @@ const path = require('path');
 const connect = require('./db');
 const session = require('express-session');
 const uuidv4 = require('uuid/v4');
-const { recommendInitialCity, recommendCity, listCities, postSurvey, recommendCityWithCritiques, recommendInitialCityWithCritiques  } = require('./recommender/controller');
+const { recommendInitialCity, recommendCity, listCities, postSurvey, recommendCityWithCritiques, recommendCityWithEliminationCritiques, recommendInitialCityWithCritiques  } = require('./recommender/controller');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -32,6 +32,7 @@ app.get('/api/recommendation', recommendCity);
 app.get('/api/cities', listCities);
 app.post('/api/survey', postSurvey);
 app.get('/api/recommendations-with-critiques', recommendCityWithCritiques);
+app.get('/api/recommendations-with-elimination-critiques', recommendCityWithEliminationCritiques);
 app.get('/api/initial-recommendations-with-critiques', recommendInitialCityWithCritiques);
 
 if (process.env.NODE_ENV === 'production') {

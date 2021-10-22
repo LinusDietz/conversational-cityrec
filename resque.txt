@@ -1,0 +1,137 @@
+1. Quality of Recommended Items
+
+1.1 Accuracy
+1.1.1 The items recommended to me matched my interests.
+=> The final city recommended to me matched my interest.|interest
+1.1.2 This recommender system gave me good suggestions.
+=> This recommender system gave me good suggestions.|suggestions
+
+1.2 Relative Accuracy
+1.2.1 The recommendations I received better fits my interests than what I may receive from a friend.
+=> The recommendations I received better fits my interests than what I may receive from a friend.|friend
+1.3 Familiarity
+1.3.1 Some of the recommended items are familiar to me.
+=> Some of the recommended cities are familiar to me.|familiar
+
+1.4 Attractiveness
+1.4.1 The items recommended to me are attractive.
+=> The cities recommended to me are attractive.|attractive
+ 
+
+1.5 Novelty
+1.5.1 The items recommended to me are novel.
+
+1.5.2 This recommender system helped me discover new products.
+=> This recommender system helped me discover new cities to travel to.|discovery
+
+1.6 Diversity
+1.6.1 The items recommended to me are diverse.
+ 
+1.6.2 The items recommended to me are similar to each other.
+ 
+1.7 Context Compatibility
+1.7.1 I was only provided with general recommendations (e.g., top rated products), which are the same for anyone.
+ 
+1.7.2 The recommendations are not outdated.
+ 
+
+2. Interaction Adequacy
+2.1 This recommender system allows me to tell what I like/dislike.
+=> This recommender system allows me to tell what I like/dislike.|tell_like
+
+2.2 This recommender system allows me to modify my taste profile.
+ 
+2.3 This recommender system explains why the products are recommended to me.
+ 
+
+3. Interface Adequacy
+3.1 The information provided for the recommended items is sufficient for me to make a purchase/download decision.
+=> The information provided for the recommended cities is sufficient for me to make a travel decision.|sufficient
+ 
+3.2 The labels of this recommender system interface are clear.
+ 
+3.3 The labels of this recommender system interface are adequate.
+ 
+3.4 The layout of this recommender system interface is attractive.
+ 
+3.5 The layout of this recommender system interface is adequate.
+=> The layout of this recommender system interface is adequate.|adequate
+
+4. Perceived Ease of Use
+4.1 Ease of Preference Elicitation and Revision
+4.1.1 I found it easy to tell this recommender system what I like/dislike.
+=> I found it easy to tell this recommender system what I like/dislike.|easy_like
+4.1.2 I found it easy to modify my taste profile in this recommender system.
+=> I found it easy to modify my preferences in this recommender system.|easy_modify
+4.1.3 I found it easy to make this recommender system recommend new items to me.
+ 
+4.1.4 I found it easy to inform the system if I dislike/like the recommended item.
+=> I found it easy to inform the system if I dislike/like the currently recommended city.|easy_inform
+
+4.2 Ease of Initial Learning
+4.2.1 I became familiar with this recommender system very quickly.
+=> I became familiar with this recommender system very quickly.|familiar_quickly
+
+4.2.2 I easily found the recommended items.
+ 
+
+
+=> Please select "Disagree" for this attention check.|attentionCheck
+
+
+5. Perceived Usefulness
+5.1 This recommender system helped me find the ideal item.
+=> This recommender system helped me find the ideal city to travel to.|ideal
+5.2 This recommender system influenced my selection of items.
+=> This recommender system influenced my selection of cities.|influence
+5.3 Using this recommender system to find what I like is easy.
+5.4 Finding an item to buy/download with the help of this recommender system is easy.
+=> Finding a city to travel to with the help of this recommender system is easy.|finding
+
+
+6. Control/Transparency
+6.1 I feel in control of telling this recommender system what I want.
+=> I feel in control of modifying my preferences.|control
+
+6.2 I feel in control of modifying my taste profile.
+ 
+6.3 I understood why the items were recommended to me.
+ 
+6.4 This system's recommender system seems to control my decision process rather than me.
+ 
+
+
+7. Attitudes
+7.1 Overall, I am satisfied with this recommender system.
+=> Overall, I am satisfied with this recommender system.|satisfied
+7.2 I am convinced of the items recommended to me.
+I am convinced of the cities recommended to me.|convinced
+7.3 I am confident I will like the items recommended to me.|confident
+ 
+7.4 This recommender system made me more confident about my selection/decision.
+ 
+7.5 The recommended items made me confused about my choice.
+ 
+7.6 This recommender system can be trusted.
+=> This recommender system can be trusted.|trust
+
+8. Behavioral Intentions
+8.1 Intention to Use the System
+8.1.1 I will use this recommender to find items to buy/download.
+=> I would use this recommender to find cities to travel to.|use_again
+
+8.2 Continuance and Frequency
+8.2.1 I will use this recommender again.
+ 
+8.2.2 I will use this recommender frequently.
+ 
+8.2.3 I will use this recommender rather than other recommenders.
+ 
+8.3 Recommendation to Friends
+8.3.1 I will tell my friends about this recommender.
+ 
+8.4 Purchase Intention
+8.4.1 I would buy the items recommended, given the opportunity.
+ 
+
+

@@ -10,7 +10,7 @@ const Container = styled.div`
 const Label = styled.span`
   display: block;
   font-weight: 700;
-  font-size: 10px;
+  font-size: 12px;
   color: ${p => p.theme.midnightBlue};
   text-transform: uppercase;
 `;

@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { Card } from '../../../CommonStyles';
+import Banner from '../../../components/Banner/';
 
 export const ModifiedCard = styled(Card)`
   &:hover {
@@ -65,4 +66,8 @@ export const SurveyFootnote = styled.div`
   width: 100%;
   text-align: left;
   font-size: 12px;
+`;
+
+export const BannerWithMargin = styled(Banner)`
+  margin-bottom: ${p => p.margin}px;
 `;

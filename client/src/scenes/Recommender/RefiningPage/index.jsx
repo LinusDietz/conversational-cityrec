@@ -1,30 +1,20 @@
 import React from 'react';
-import { StandardRow } from '../../../CommonStyles';
-import { CenteredContainer, BannerWithMargin } from '../styles';
+import { HintMessage, CenteredContainer } from '../styles';
 import Spinner from '../../../components/Spinner';
 import ReactTooltip from 'react-tooltip';
 import ScoreRefiner from './ScoreRefiner';
 import styled from 'styled-components';
-import HoverInfoIndicator from '../../../components/HoverInfoIndicator';
 import CityDetailsPane from "../FinalRecommendationPage/CityDetailsPane";
 
-const Refiner =  styled.div.attrs(() => ({
-    className: 'offset-md-1 col-md-10 col-sm-12'
-  }
+const Refiner = styled.div.attrs(() => ({
+  className: 'offset-md-1 col-md-10 col-sm-12'
+}
 ))`
   background-color: white;
   margin-bottom: 15px;
 `;
 
 const aspects = [
-  {
-    aspectName: 'price level',
-    aspectCodeName: 'cost',
-  },
-  {
-    aspectName: 'average temperature',
-    aspectCodeName: 'temperature',
-  },
   {
     aspectName: 'food',
     aspectCodeName: 'food',
@@ -40,20 +30,29 @@ const aspects = [
   {
     aspectName: 'nightlife',
     aspectCodeName: 'nightlife',
+  },
+  {
+    aspectName: 'price level',
+    aspectCodeName: 'cost',
+  },
+  {
+    aspectName: 'average temperature',
+    aspectCodeName: 'temperature',
   }
 ];
-
-const possibleAspectValues = new Set([-2, -1, 0, 1, 2]);
 
 class RefiningPage extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      currentAspectIndex: 0
+      shouldFlash: true,
+      currentAspectIndex: 0,
+      critiquingCycle: 0
     }
     this.myRef = React.createRef();
   }
+
 
   componentDidMount() {
     const { shouldResetRecommenderProgress, resetRecommenderProgress } = this.props;
@@ -67,106 +66,145 @@ class RefiningPage extends React.Component {
     ref.current.scrollTo(0, 0);
   }
 
-  disableNextButton = (refinements) => {
-    let anyMatch = aspects.find(aspect =>
-      !possibleAspectValues.has(refinements[aspect.aspectCodeName])
-    );
-
-    return !!anyMatch;
+  isRefined = (refinements) => {
+    return Object.values(refinements).reduce((a, b) => Math.abs(a) + Math.abs(b)) === 0;
   };
+  static getDerivedStateFromProps(props, state) {
+    let recommendedCity = props.cities[0];
 
+    if (typeof recommendedCity !== 'undefined') {
+      if (typeof state.recommendedCity === 'undefined') {
+
+        return {
+          shouldFlash: true,
+          recommendedCity: recommendedCity,
+          critiquedCity: recommendedCity
+        };
+      }
+      if (recommendedCity.id !== state.recommendedCity.id) {
+        let critiquingCycle = state.critiquingCycle;
+        return {
+          shouldFlash: true,
+          recommendedCity: recommendedCity,
+          critiquedCity: recommendedCity,
+          critiquingCycle: critiquingCycle + 1
+        };
+      }
+      return null;
+    }
+    return null;
+  }
   render() {
     const { cities, refinements, isLoading, handleRefinementAction, onNextStepClick, onCritiqueClick } = this.props;
+    let iteration = this.state.critiquingCycle;
 
     let city = cities[0] || {};
     let buttonTipText = "Select this city and finish recommendation";
-    let disabledContinueText = "Please select values for below aspects";
+    let disabledContinueText = "Please select one or several aspects to refine your preferences!";
     let continueText = "Continue recommendation with adjustments to the feature values";
-
+    let sufficientCritiquingsteps = iteration >= 1;
+    if (!sufficientCritiquingsteps) {
+      buttonTipText = "This is our current recommendation for you. You should refine this recommendation a few times before you can submit.";
+    } else {
+      buttonTipText = "This was our initial recommendation for you. ";
+    }
     return (
       <div ref={this.myRef}>
-      <CenteredContainer>
-        <BannerWithMargin margin={15}>Please check out the initial recommendations below and provide some feedback!</BannerWithMargin>
+        <CenteredContainer>
+          <HintMessage>
+            We have computed this recommendation based on your previous choices.<br />
+        In this step, your feedback helps us to better understand what you may like.<br />
+        Please check out the initial recommendation below and fine-tune the recommendation by adjusting the individual aspects.<br />
+        </HintMessage>
+          {isLoading
+            ? <Spinner />
+            : <CityDetailsPane city={city} maxSimilarity={10} isLoading={isLoading} />
+          }
+                  <strong>Please refine the current recommendation until you are satisfied with the recommended city!</strong>
 
-        <StandardRow>
-          <HoverInfoIndicator>In this step, your feedback helps us better tune our understanding of what you prefer. Please check out the initial recommendations below and rate how well each aspect fits your preferences!</HoverInfoIndicator>
-        </StandardRow>
+          {
+            sufficientCritiquingsteps ?
+              this.isRefined(refinements) ?
+                <div>
+                  <span data-tip={disabledContinueText}><button style={{ 'fontWeight': '600', 'borderRadius': '0px', 'marginRight': '5px', 'marginTop': '10px' }} onClick={() => onCritiqueClick(false)} disabled={true}>Continue Recommendation with Adjustments</button></span>
+                  &nbsp;or&nbsp;
+                  <span data-tip={buttonTipText}><button style={{ 'backgroundColor': '#88D68F', 'color': 'black', 'fontWeight': '600', 'borderRadius': '5px', 'margin': '5px', 'marginTop': '10px' }} onClick={() => onNextStepClick()}>Confirm {city.name}</button></span>
+                </div>
+                :
+                <div>
+                  <span data-tip={continueText}><button style={{ 'backgroundColor': '#474bde', 'color': 'white', 'fontWeight': '600', 'borderRadius': '5px', 'marginTop': '10px' }} onClick={() => onCritiqueClick(false)}>Continue Recommendation with Adjustments</button></span>
+                  &nbsp;or&nbsp;
+                  <span data-tip={buttonTipText}><button style={{ 'backgroundColor': '#88D68F', 'color': 'black', 'fontWeight': '600', 'borderRadius': '5px', 'margin': '5px', 'marginTop': '10px' }} onClick={() => onNextStepClick()}>Confirm {city.name}</button></span>
+                </div>
+              :
+              this.isRefined(refinements) ?
+                <div>
+                  <span data-tip="Please first refine your preferences!"><button disabled={true} style={{ 'backgroundColor': 'lightgray', 'fontWeight': '600', 'borderRadius': '5px', 'margin': '5px', 'marginTop': '10px' }}>{city.name}</button></span>
+                  <span data-tip={disabledContinueText}><button style={{ 'fontWeight': '600', 'borderRadius': '0px',  'marginRight': '5px', 'marginTop': '10px' }} onClick={() => onCritiqueClick(false)} disabled={true}>Continue Recommendation with Adjustments</button></span>
+                </div>
+                :
+                <div>
+                  <span data-tip="Please first refine your preferences!"><button disabled={true} style={{ 'backgroundColor': 'lightgray', 'fontWeight': '600', 'borderRadius': '5px', 'margin': '5px', 'marginTop': '10px' }}>{city.name}</button></span>
+                  <span data-tip={continueText}><button style={{ 'backgroundColor': '#474bde', 'color': 'white', 'fontWeight': '600', 'borderRadius': '5px', 'marginTop': '10px' }} onClick={() => onCritiqueClick(false)}>Continue Recommendation with Adjustments</button></span>
+                </div>
+          }
+          <HintMessage>How did you find the below aspects of the recommendation?<br /> You will see the outcome of the adjustments in the next step.</HintMessage>
+          <ReactTooltip place="top" type="dark" effect="solid" />
 
-        {isLoading
-          ? <Spinner/>
-          : <CityDetailsPane city={city}  maxSimilarity={10} isLoading={isLoading} />
-        }
-
-        {
-          this.disableNextButton(refinements) ?
+          {isLoading ?
+            <Spinner /> :
             <div>
-              <span data-tip={buttonTipText}><button style={{'background-color': '#474bde', 'color': 'white', 'font-weight': '600', 'border-radius': '5px', 'margin': '5px', 'marginTop': '10px'}} onClick={() => onNextStepClick()}>Select {city.name}</button></span>
-              <span data-tip={disabledContinueText}><button style={{'font-weight': '600', 'border-radius': '0px', 'text-decoration':'line-through', 'marginRight': '5px', 'marginTop': '10px'}} onClick={() => onCritiqueClick(false)} disabled={true}>Continue Recommendation with Adjustments</button></span>
+              <Refiner>
+                <ScoreRefiner
+                  aspectName={aspects[0].aspectName}
+                  aspectCodeName={aspects[0].aspectCodeName}
+                  handleRefinementAction={handleRefinementAction}
+                  selectedValue={refinements[aspects[0].aspectCodeName]}
+                />
+              </Refiner>
+              <Refiner>
+                <ScoreRefiner
+                  aspectName={aspects[1].aspectName}
+                  aspectCodeName={aspects[1].aspectCodeName}
+                  handleRefinementAction={handleRefinementAction}
+                  selectedValue={refinements[aspects[1].aspectCodeName]}
+                />
+              </Refiner>
+              <Refiner>
+                <ScoreRefiner
+                  aspectName={aspects[2].aspectName}
+                  aspectCodeName={aspects[2].aspectCodeName}
+                  handleRefinementAction={handleRefinementAction}
+                  selectedValue={refinements[aspects[2].aspectCodeName]}
+                />
+              </Refiner>
+              <Refiner>
+                <ScoreRefiner
+                  aspectName={aspects[3].aspectName}
+                  aspectCodeName={aspects[3].aspectCodeName}
+                  handleRefinementAction={handleRefinementAction}
+                  selectedValue={refinements[aspects[3].aspectCodeName]}
+                />
+              </Refiner>
+              <Refiner>
+                <ScoreRefiner
+                  aspectName={aspects[4].aspectName}
+                  aspectCodeName={aspects[4].aspectCodeName}
+                  handleRefinementAction={handleRefinementAction}
+                  selectedValue={refinements[aspects[4].aspectCodeName]}
+                />
+              </Refiner>
+              <Refiner>
+                <ScoreRefiner
+                  aspectName={aspects[5].aspectName}
+                  aspectCodeName={aspects[5].aspectCodeName}
+                  handleRefinementAction={handleRefinementAction}
+                  selectedValue={refinements[aspects[5].aspectCodeName]}
+                />
+              </Refiner>
             </div>
-            :
-            <div>
-              <span data-tip={buttonTipText}><button style={{'background-color': '#474bde', 'color': 'white', 'font-weight': '600', 'border-radius': '5px', 'margin': '5px', 'marginTop': '10px'}} onClick={() => onNextStepClick()}>Select {city.name}</button></span>
-              <span data-tip={continueText}><button style={{'background-color': '#474bde', 'color': 'white', 'font-weight': '600', 'border-radius': '5px', 'marginTop': '10px'}} onClick={() => onCritiqueClick(false)}>Continue Recommendation with Adjustments</button></span>
-            </div>
-        }
-
-        <div style={{'margin': '10px', 'marginTop': '10px'}}>How did you find the below aspects of the recommendation ?</div>
-        <ReactTooltip place="top" type="dark" effect="solid"/>
-
-        {isLoading ?
-        <Spinner/> :
-          <div>
-            <Refiner>
-              <ScoreRefiner
-                aspectName={aspects[0].aspectName}
-                aspectCodeName={aspects[0].aspectCodeName}
-                handleRefinementAction={handleRefinementAction}
-                selectedValue={refinements[aspects[0].aspectCodeName]}
-              />
-            </Refiner>
-            <Refiner>
-              <ScoreRefiner
-                aspectName={aspects[1].aspectName}
-                aspectCodeName={aspects[1].aspectCodeName}
-                handleRefinementAction={handleRefinementAction}
-                selectedValue={refinements[aspects[1].aspectCodeName]}
-              />
-            </Refiner>
-            <Refiner>
-              <ScoreRefiner
-                aspectName={aspects[2].aspectName}
-                aspectCodeName={aspects[2].aspectCodeName}
-                handleRefinementAction={handleRefinementAction}
-                selectedValue={refinements[aspects[2].aspectCodeName]}
-              />
-            </Refiner>
-            <Refiner>
-              <ScoreRefiner
-                aspectName={aspects[3].aspectName}
-                aspectCodeName={aspects[3].aspectCodeName}
-                handleRefinementAction={handleRefinementAction}
-                selectedValue={refinements[aspects[3].aspectCodeName]}
-              />
-            </Refiner>
-            <Refiner>
-              <ScoreRefiner
-                aspectName={aspects[4].aspectName}
-                aspectCodeName={aspects[4].aspectCodeName}
-                handleRefinementAction={handleRefinementAction}
-                selectedValue={refinements[aspects[4].aspectCodeName]}
-              />
-            </Refiner>
-            <Refiner>
-              <ScoreRefiner
-                aspectName={aspects[5].aspectName}
-                aspectCodeName={aspects[5].aspectCodeName}
-                handleRefinementAction={handleRefinementAction}
-                selectedValue={refinements[aspects[5].aspectCodeName]}
-              />
-            </Refiner>
-          </div>
-        }
-      </CenteredContainer>
+          }
+        </CenteredContainer>
       </div>
     );
   }

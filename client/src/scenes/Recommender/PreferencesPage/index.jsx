@@ -3,7 +3,6 @@ import { StandardRow, StandardSmallContainer } from '../../../CommonStyles';
 import { CenteredContainer, BannerWithMargin } from '../styles';
 import SmallCity from './SmallCity';
 import Spinner from '../../../components/Spinner';
-import HoverInfoIndicator from '../../../components/HoverInfoIndicator';
 import styled from 'styled-components';
 
 const RefreshMessageContainer = styled.div`
@@ -73,10 +72,11 @@ class PreferencesPage extends React.Component {
 
     return (
       <CenteredContainer>
-        <BannerWithMargin margin={15}>Tell us your preferences! Please select 3 to 5 cities from the list below, which you like best.</BannerWithMargin>      
         <StandardRow>
-          <HoverInfoIndicator>By telling us which cities best reflect your preferences, we can model your choices and give you relevant recommendations. Your selections can also be cities that you have already visited! </HoverInfoIndicator>
+          Imagine you want to travel to a city, but don't know yet where to go.<br />
+          In this first step, select cities that are appealing to you irrespective of how far they might be away and how likely you are to visit them any time soon.
         </StandardRow>
+        <BannerWithMargin margin={15}>Tell us your preferences! Please select 3 to 5 cities from the list below, which you like best.<br />You should select cities regardless of whether you have already visited them or not.</BannerWithMargin>
         {isLoading
           ? <Spinner />
           :

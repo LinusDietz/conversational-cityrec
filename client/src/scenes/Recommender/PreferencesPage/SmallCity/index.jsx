@@ -4,7 +4,7 @@ import Checkbox from '../../../../components/Checkbox';
 import InfoBullet from '../../../../components/InfoBullet';
 import { Card, CardHead, CardBody, SerifBullet } from '../../../../CommonStyles';
 import CostIndicator from '../../../../components/CostIndicator';
-const MAP_KEY = 'Nbx46lwGXYYiagLOQyuAM8Y9PHBimLAn'
+const MAP_KEY = 'nfDTGswfvhlIVG3XwaxfZenrjx4hJjUK'
 
 const LeftSideContent = styled.div`
   width: 50%;

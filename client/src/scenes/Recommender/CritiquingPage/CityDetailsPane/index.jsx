@@ -7,11 +7,11 @@ import CostIndicator from '../../../../components/CostIndicator';
 import { ProgressBarWithMargin, TemperatureField } from '../../styles';
 import Spinner from "../../../../components/Spinner";
 
-const MAP_KEY = 'Nbx46lwGXYYiagLOQyuAM8Y9PHBimLAn'
+const MAP_KEY = 'nfDTGswfvhlIVG3XwaxfZenrjx4hJjUK'
 
 const Container = styled(ModifiedCard)`
   min-height: 350px;
-  max-width: 350px;
+  max-width: 550px;
   margin: 0 auto;
   height: 100%;
   padding: 10px;
@@ -87,14 +87,14 @@ const CityDetailsPane = props => {
   return(
     isLoading ? <Container><Spinner/></Container> :
     <Container>
-      <span style={{'font-size': '20px'}}>This is our recommendation for you</span>
+      <span style={{'fontSize': '20px'}}>This is the current recommendation for you</span>
       <CardHead>
         <div>
           <span id="title">{city.name}</span>
           <span id="subtitle">{city.country}</span>
         </div>
       </CardHead>
-      <RichContentContainer style={{'height': '100px'}} pictureUrl={city.pictureUrl} mapUrl={mapUrl}>
+      <RichContentContainer style={{'height': '200px'}} pictureUrl={city.pictureUrl} mapUrl={mapUrl}>
         <div id="map" style={{'width': '100%'}}></div>
       </RichContentContainer>
 

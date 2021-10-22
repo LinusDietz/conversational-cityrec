@@ -175,7 +175,7 @@ class ScoreRefiner extends React.Component {
   render() {
     const { selectedValue, aspectName, aspectCodeName } = this.props;
     const { shouldFlash } = this.state;
-    
+
     const renderedOptions = options.map((o, i) => 
       <Option key={i} isSelected={selectedValue === o.value} onClick={this.onRefinementOptionClick(aspectCodeName, o.value)}>
         <OptionIcon

@@ -75,6 +75,10 @@ const questionsSet = {
           text: "The layout and labels of the recommender interface are adequate"
         },
         {
+          value: "attentionCheck",
+          text: 'Please select "Disagree" for this attention check'
+        },
+        {
           value: "satisfaction",
           text: "Overall, I am satisfied with this recommender system"
         },
@@ -125,10 +129,6 @@ const questionsSet = {
       ],
       rows: [
         {
-          value: "cost",
-          text: "Cost"
-        },
-        {
           value: "weather",
           text: "Weather"
         },
@@ -151,6 +151,10 @@ const questionsSet = {
         {
           value: "shopsAndServices",
           text: "An abundance of shops and services"
+        },
+        {
+          value: "cost",
+          text: "Price level"
         },
       ]
     },
@@ -264,7 +268,6 @@ class RecommendationsPage extends React.Component {
   onComplete = (survey, options) => {
     const { submitSurvey } = this.props;
     submitSurvey(survey.data);
-    console.log('survey submitted...');
   }
   onCompleteOnce = once(this.onComplete);
 

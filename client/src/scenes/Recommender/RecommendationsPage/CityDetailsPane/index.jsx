@@ -7,7 +7,7 @@ import CostIndicator from '../../../../components/CostIndicator';
 import MatchLevelIndicator from '../../../../components/MatchLevelIndicator';
 import { ProgressBarWithMargin, TemperatureField } from '../../styles';
 
-const MAP_KEY = 'Nbx46lwGXYYiagLOQyuAM8Y9PHBimLAn'
+const MAP_KEY = 'nfDTGswfvhlIVG3XwaxfZenrjx4hJjUK'
 
 const Container = styled(ModifiedCard)`
   min-height: 350px;

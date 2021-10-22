@@ -81,14 +81,14 @@ export const CardHead = styled.div`
 
   & span#title {
     display: block;
-    font-size: 15px;
+    font-size: 16px;
     color: ${p => p.theme.primaryText};
     font-weight: 700;
   }
 
   & span#subtitle {
     display: block;
-    font-size: 9px;
+    font-size: 12px;
     color: ${p => p.theme.secondaryText};
     text-transform: uppercase;
     margin-top: -2px;
